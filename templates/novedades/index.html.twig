@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Noticias{% endblock %}
+
+{% block body %}
+    <div class="container" style="background: navajowhite;border: 0;">
+
+    <h1>Novedades index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Noticias</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for novedade in novedades %}
+            <tr>
+                <td>{{ novedade.id }}</td>
+                <td>{{ novedade.noticias }}</td>
+                <td>
+                    <a href="{{ path('app_novedades_show', {'id': novedade.id}) }}" class>show</a>
+                    <a href="{{ path('app_novedades_edit', {'id': novedade.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_novedades_new') }}" class="btn btn-info w-25">Create new</a>
+</div>
+{% endblock %}

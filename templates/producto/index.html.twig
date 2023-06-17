@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Producto index{% endblock %}
+{% block body %}
+    <div class="dropdown" style="align-content: center; opacity:50%">
+        <button
+                class="dropdown-toggle btn"
+                type="button"
+                id="user-dropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+        >Elige que categoria quieres Ver
+
+        </button>
+
+        <div class="dropdown-content" style="background:#dfdfdf;align-content: center; color:black;">
+            <ul>
+                <li>
+                    <a class="dropdown-item" href="{{ path('app_producto_index') }}" style="color:black">Todos los productos</a>
+                </li>
+                {% for categoria in categorias %}
+                <li>
+                    <a class="dropdown-item" href="{{ path('app_producto_categoria',{'id': categoria.id}) }}"style="color: black">{{ categoria.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container" style="background: navajowhite;border: 0;margin-left: 10px;with:1000px;margin-top: 10px;">
+
+    <p></p>
+        <p></p>
+        <p></p>
+        <p></p>
+        <h1>Producto index</h1>
+        <a href="{{ path('app_producto_new') }}">Create new</a>
+        <table class="table" style="width: 1000px;margin-left: 20px;">
+            <thead>
+            <tr >
+                <th style="width: 5%;">Id</th>
+                <th>Name</th>
+                <th>cantidad</th>
+                <th>Imagen</th>
+                <th>precio</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for producto in productos %}
+                <tr>
+                    <td class="table-info">{{ producto.id }}</td>
+                    <td>{{ producto.name }}</td>
+                    <td>{{ producto.stock }}</td>
+                    <td><img src="{{ asset('images/products/') }}{{ producto.imageName }}"  height="50"></td>
+                    <td>{{ producto.precio |number_format(2, ',', '.')}}€ </td>
+                    <td>
+                        <a href="{{ path('app_producto_show', {'id': producto.id}) }}">show</a>
+                        <a href="{{ path('app_producto_edit', {'id': producto.id}) }}">edit</a>
+                        <a href="{{ path('app_producto_detail', {'id': producto.id}) }}">Añadir al carrito</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

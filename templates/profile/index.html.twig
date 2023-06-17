@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mi perfil{% endblock %}
+
+{% block body %}
+
+<div class="container" style="background: navajowhite;border: 0;">
+
+        <h1>{{ cliente.name}}</h1>
+
+    <ul style="margin-top: 25px;">
+        <li>Email:<br>{{ cliente.email}}</li>
+        <li>Telefono de contacto:<br>{{ cliente.tlfContacto}}</li>
+        <li>Pedidos realizados:<br>{{ pedidos}}</li>
+    </ul>
+    <div>
+
+
+
+{% endblock %}

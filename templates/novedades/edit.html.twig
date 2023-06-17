@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Noticias{% endblock %}
+
+{% block body %}
+
+    <div class="container" style="background: navajowhite;border: 0;">
+
+    <h1>Edit Novedades</h1>
+
+    {{ include('novedades/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_novedades_index') }}"class="btn btn-info w-25">back to list</a>
+
+    {{ include('novedades/_delete_form.html.twig') }}
+</div>
+{% endblock %}

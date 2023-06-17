@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container" style="background: navajowhite;border: 0;">
+
+<div class="col-md-8">
+        <p></p>
+        <div class="flex-fill mr-2" style="margin-top: 10px;">
+            <img src="{{ asset('images/products/') }}{{product.imageName }}" width="250" alt="Product image">
+        </div>
+        <p></p>
+        <p></p>
+        <p></p>
+        <h2 class="mt-4 mt-md-0">{{ product.name }}</h2>
+        <h3>{{ product.precio }} €</h3>
+        <hr>
+        <b>Description: </b>{{ product.name }}
+        {{ form_start(form, {'attr': {'class': 'mt-4 p-4 bg-light'}}) }}
+        <div class="form-group">
+            {{ form_label(form.quantity) }}
+            {{ form_widget(form.quantity, {
+                'attr': {
+                    'class': 'form-control ' ~ (form.quantity.vars.valid ? '' : 'is-invalid')
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.quantity) }}
+            </div>
+        </div>
+        {{ form_widget(form.add, {'attr': {'class': 'btn btn-warning w-25'}}) }}
+        <a class="btn btn-warning w-25" href="{{ path('app_producto_index') }}">Volver a listado</a>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

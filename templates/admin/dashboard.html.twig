@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin{% endblock %}
+{% block body %}
+    <div id="mother">
+    <div id="infoPedidos"style="background: navajowhite; border: 0;">
+        <table class="table" style="background: navajowhite">
+            <h1 >Pedidos Recientes</h1>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Referencia</th>
+                <th>creado</th>
+            </tr>
+            </thead>
+            <tbody style="text-align: center">
+            {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido.id }}</td>
+                    <td>{{ pedido.referencia }}</td>
+                    <td>{{ pedido.createdAt|date("d/m/Y") }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div  id="infoStock"style="background: navajowhite; border: 0;">
+        <table class="table">
+            <h1>Stock</h1>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Producto</th>
+                <th>cantidad</th>
+            </tr>
+            </thead>
+            <tbody style="text-align: center">
+            {% for stock in stocks %}
+                <tr>
+                    <td>{{ stock.id }}</td>
+                    <td>{{ stock.producto }}</td>
+                    <td>{{ stock.cantidad }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        <div  id="infoConsulta"style="background: navajowhite; border: 0; background-clip: content-box; justify-content: space-around; width:auto;margin-left: 10px;margin-top: 50px;padding-top:10px; align-items: center;text-align: center;">
+            <table class="table">
+                <h1>Consultas</h1>
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Asunto</th>
+                </tr>
+                </thead>
+                <tbody style="text-align: center">
+                {% for consulta in consultas %}
+                    <tr>
+                        <td>{{ consulta.id }}</td>
+                        <td>{{consulta.asunto }}</td>
+
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+

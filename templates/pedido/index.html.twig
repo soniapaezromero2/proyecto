@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pedidos{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <div class="container" style="background: navajowhite;border: 0;margin-left: 10px;with:1000px;margin-top: 10px;">
+    <h1>Pedido index</h1>
+
+    <table class="table" style="width: 800px;">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Referencia</th>
+                <th>Clientes</th>
+                <th>Creado</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Axtions</th>
+
+            </tr>
+        </thead>
+        <tbody style="text-align: center">
+        {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.id }}</td>
+                <td>{{ pedido.referencia }}</td>
+                <td>{{ pedido.clientePedido }}</td>
+                <td>{{ pedido.createdAt|date("d/m/Y") }}</td>
+                <td>{{ pedido.estado}}</td>
+                <td>{{ pedido.total|number_format(2, ',', '.') }}€</td>
+                <td>
+                    <a href="{{ path('app_pedido_show', {'id': pedido.id}) }}">show</a>
+                    <a href="{{ path('app_pedido_edit', {'id': pedido.id}) }}">edit</a>
+                </td>
+
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_pedido_new') }}"class="btn btn-info w-25">Create new</a>
+</div>
+{% endblock %}

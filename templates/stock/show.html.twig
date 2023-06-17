@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stock {% endblock %}
+
+{% block body %}
+    <div class="container" style="background: navajowhite;border: 0;margin-left: 10px;">
+    <h1>Stock</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ stock.id }}</td>
+            </tr>
+            <tr>
+                <th>Producto</th>
+                <td>{{ stock.producto }}</td>
+            </tr>
+            <tr>
+                <th>Cantidad</th>
+                <td>{{ stock.cantidad }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a  class="btn btn-info w-25" href="{{ path('app_stock_index') }}"class="btn btn-info w-25">back to list</a>
+
+    <a class="btn btn-info w-25" href="{{ path('app_stock_edit', {'id': stock.id}) }}"class="btn btn-info w-25">edit</a>
+
+    {{ include('stock/_delete_form.html.twig') }}
+    </div>
+{% endblock %}

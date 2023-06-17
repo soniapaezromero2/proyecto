@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pedidos{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <div class="container" style="background: navajowhite;border: 0;">
+
+    <h1>Edit Pedido</h1>
+    <p></p>
+    <label><h2>{{ pedido.referencia }}</h2></label>
+    <p></p>
+    <p></p>
+    <label><h4>Cliente</h4></label>
+    <p></p>
+    <label><h5>{{ pedido.clientePedido }}</h5></label>
+    <p></p>
+    {{ form_start(form) }}
+    <div class="form-group">
+        <h4 style="text-align: center;">Productos</h4>
+        <table class="table" style="width: 300px;margin:0 auto;align-content: center;">
+            <thead>
+            <tr>
+                <th style="width: 5%;">Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{item.product.name }}</td>
+                    <td>{{ item.product.precio }}€</td>
+                    <td><input type="number" value="{{ item.quantity }}"  min="1" max="100"></td>
+                    <th>{{ item.total }}</th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a  class="btn btn-info w-25" href="{{ path('app_producto_index') }}">Añadir producto</a>
+        <p></p>
+        <p></p>
+        <label><h4>Total del pedido</h4></label><p></p>
+        <input  value="{{ pedido.total }}€" type="text" class="form-control" style ="width: 300px;margin:0 auto;">
+    </div>
+    {{ form_widget(form.add, {'attr': {'class': 'btn btn-info w-25'}}) }}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a  class="btn btn-info w-25" href="{{ path('app_pedido_index') }}">back to list</a>
+    {% else %}
+        <a class="btn btn-info w-25" href="{{ path('app_pedidocliente_show',{'id': cliente.id}) }}">back to list</a>
+    {% endif %}
+    {{ form_end(form) }}
+
+</div>
+    {{ include('pedido/_delete_form.html.twig') }}
+
+</div>
+{% endblock %}

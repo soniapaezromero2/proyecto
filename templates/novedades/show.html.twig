@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Noticias{% endblock %}
+
+{% block body %}
+    <div class="container" style="background: navajowhite;border: 0;">
+
+    <h1>Novedades</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ novedade.id }}</td>
+            </tr>
+            <tr>
+                <th>Noticias</th>
+                <td>{{ novedade.noticias }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_novedades_index') }}"class="btn btn-info w-25">back to list</a>
+
+    <a href="{{ path('app_novedades_edit', {'id': novedade.id}) }}"class="btn btn-info w-25">edit</a>
+
+    {{ include('novedades/_delete_form.html.twig') }}
+</div>
+{% endblock %}

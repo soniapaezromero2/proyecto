@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pedido{% endblock %}
+
+{% block body %}
+    <div class="container" style="background: navajowhite;border: 0;">
+
+    <h1>Pedido</h1>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ pedido.id }}</td>
+            </tr>
+            <tr>
+                <th>Referencia</th>
+                <td>{{ pedido.referencia }}</td>
+            </tr>
+            <tr>
+                <th>Cliente</th>
+                <td>{{ pedido.clientePedido }}€</td>
+            </tr>
+            <table class="table" style="width: 300px;margin:0 auto;align-content: center;">
+                <thead>
+                <tr>
+                    <th style="width: 5%;">Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td>{{producto.name }}</td>
+                        <td>{{producto.precio }}€</td>
+                        <td>{{ producto.cantidadProducto}}</td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+               </table>
+            <p></p>
+            <p></p>
+            <label><h4>Total del pedido</h4></label><p></p>
+            <input  value="{{ pedido.total }}€" type="text" class="form-control" style ="width: 300px;margin:0 auto;">
+            <p></p>
+            <p></p>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_pedido_index') }}">back to list</a>
+    {% else %}
+        <a  class="btn btn-info w-25" href="{{ path('app_pedidocliente_show',{'id': cliente.id}) }}">back to list</a>
+    {% endif %}
+    <a  class="btn btn-info w-25" href="{{ path('app_pedido_edit', {'id': pedido.id}) }}">edit</a>
+
+    {{ include('pedido/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
