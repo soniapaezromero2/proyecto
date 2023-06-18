@@ -71,12 +71,8 @@ class CartSessionStorage
      */
     private function getCartId(): ?int
     {
-        if(is_null(self::CART_KEY_NAME)){
-            return $this->getSession()->get(self::CART_KEY_NAME);
-        }else{
-          //  dd( $this->getSession()->get(self::CART_KEY_NAME));
-            return $this->getSession()->get(self::CART_KEY_NAME);
-        }
+         return $this->getSession()->get(self::CART_KEY_NAME);
+        
 
     }
 

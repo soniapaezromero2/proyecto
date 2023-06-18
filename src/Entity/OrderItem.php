@@ -37,12 +37,13 @@ class OrderItem
      * @ORM\JoinColumn(nullable=false)
      */
     private $orderRef;
-
-    /**
+     /**
      * @ORM\ManyToOne(targetEntity=Pedido::class, inversedBy="items")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $pedido;
+
+  
 
     public function getId(): ?int
     {
@@ -116,5 +117,6 @@ class OrderItem
 
         return $this;
     }
+
 
 }

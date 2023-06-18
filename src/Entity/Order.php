@@ -48,7 +48,8 @@ class Order
     private $updatedAt;
 
     /**
-     * @ORM\OneToOne(targetEntity=Pedido::class, mappedBy="order", cascade={"persist", "remove"})
+     * @ORM\Column(type="integer", nullable=true)
+     *
      */
     private $pedido;
 
@@ -162,18 +163,22 @@ class Order
         return $total;
     }
 
-    public function getPedido(): ?Pedido
+    /**
+      * @return int|null
+    */
+    public function getPedido(): ?int
     {
         return $this->pedido;
     }
 
-    public function setPedido(Pedido $pedido): self
-    {
-        // set the owning side of the relation if necessary
-        if ($pedido->getOrder() !== $this) {
-            $pedido->setOrder($this);
-        }
 
+
+   /**
+      * @return int|null
+    */
+    public function setPedido($pedido): ?int
+    {
+  
         $this->pedido = $pedido;
 
         return $this;

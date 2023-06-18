@@ -5,10 +5,14 @@ namespace App\Controller\Producto;
 use  App\Form\AddToCartType;
 use App\Entity\Categoria;
 use App\Entity\Producto;
+use App\Entity\Cliente;
+use App\Entity\Pedido;
 use App\Form\ProductoType;
 use App\Manager\CartManager;
+use App\Repository\ClienteRepository;
 use App\Repository\CategoriaRepository;
 use App\Repository\ProductoRepository;
+use App\Repository\EstadoRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -16,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Repository\PedidoRepository;
 
 
 /**
@@ -97,32 +102,33 @@ class ProductoController extends AbstractController
     /**
      * @Route("/detail/{id}", name="app_producto_detail")
      */
-    public function detail(Producto $producto,Request $request, CartManager $cartManager)
+    public function detail(Producto $producto,Request $request, CartManager $cartManager,PedidoRepository $pedidoRepository,EstadoRepository $estadoRepository)
     {
         $form = $this->createForm(AddToCartType::class);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $item = $form->getData();
-            $item->setProduct($producto);
-            $cart = $cartManager->getCurrentCart();
-            $ref=$cart->getPedido();
-            $item->setPedido($ref);
+            $item->setProduct($product);
 
+            $cart = $cartManager->getCurrentCart();
             $cart
                 ->addItem($item)
                 ->setUpdatedAt(new \DateTime());
 
             $cartManager->save($cart);
 
-            return $this->redirectToRoute('app_producto_detail', ['id' => $producto->getId()]);
+            return $this->redirectToRoute('product.detail', ['id' => $product->getId()]);
         }
+
 
         return $this->render('producto/detail.html.twig', [
             'product' => $producto,
             'form' => $form->createView()
         ]);
     }
+    
     /**
      * @Route("/categoria/{id}", name="app_producto_categoria", methods={"GET"})
      */

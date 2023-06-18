@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 /**
@@ -39,14 +40,14 @@ class PedidoController extends AbstractController
     public function index(PedidoRepository $pedidoRepository): Response
     {
         $email=$this->getUser()->getUserIdentifier();
-        $cliente= $this->getDoctrine()->getRepository(Cliente::class)->findOneBy(['email' => $email]);
-        $id=$cliente->getId();
-        $pedid = $this->getDoctrine()->getRepository(Pedido::class)->findBy(['clientePedido' => $id]);
+        $cliente= $this->getDoctrine()->getRepository(Cliente::class)->findOneBy(['email' => $email]);      
         if($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             return $this->render('pedido/index.html.twig', [
                 'pedidos' => $pedidoRepository->findAll(),
             ]);
         }else{
+          $id=$cliente->getId();
+          $pedid = $this->getDoctrine()->getRepository(Pedido::class)->findBy(['clientePedido' => $id]);
             return $this->render('cliente/showpedidos.html.twig', [
                 'cliente' => $cliente,
                 'pedido' => $pedid,
@@ -59,14 +60,13 @@ class PedidoController extends AbstractController
     /**
      * @Route("/new", name="app_pedido_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, PedidoRepository $pedidoRepository,EstadoRepository $estadoRepository,OrderRepository $orderRepository,OrderItemRepository $orderItemRepository, ClienteRepository $clienteRepository): Response
+    public function new(Request $request,EntityManagerInterface $entityManager, PedidoRepository $pedidoRepository,EstadoRepository $estadoRepository,OrderRepository $orderRepository,OrderItemRepository $orderItemRepository, ClienteRepository $clienteRepository): Response
     {
         $sesion=$request->getSession();
         $cart=$sesion->get('cart_id');
         $order=$orderRepository->findOneBy(['id'=>$cart]);
-        $pedido=$pedidoRepository->findOneBy(['order'=>$order]);
+        $pedido=$pedidoRepository->findOneBy(['orderpedido'=>$order]);
         if(is_null($pedido)) {
-
             $pedido = new Pedido();
             $form = $this->createFormBuilder($pedido)
                 ->add('add', SubmitType::class, [
@@ -81,11 +81,12 @@ class PedidoController extends AbstractController
             } else {
                 $ref = rand(00001, 99999);
             }
-
-            $pedido->setOrder($order);
-            $pedidoOrden = $pedido->getOrder();
-            $items = $orderItemRepository->findBy(['orderRef' => $pedidoOrden]);
-            $total = $pedidoOrden->getTotal();
+          
+            
+            $pedido->setOrder($orderpedido);
+            $pedidoOrden = $pedido->getOrder();                     
+            $items = $orderItemRepository->findBy(['orderRef' => $order]);
+            $total = $order->getTotal();
             $pedido->setTotal($total);
             $totalPedido = $pedido->getTotal();
             foreach ($items as $item) {
@@ -98,15 +99,16 @@ class PedidoController extends AbstractController
             $estado = $estadoRepository->findOneBy(['estado' => 'Enviado']);
             $pedido->setCreatedAt(new \DateTime('now'));
             $email = $this->getUser()->getUserIdentifier();
-            $cliente = $this->getDoctrine()->getRepository(Cliente::class)->findOneBy(['email' => $email]);
+            $cliente = $clienteRepository->findOneBy(['email' => $email]);
             $productos = $pedido->getProductos();
             $pedido->setClientePedido($cliente);
             $clientepedido = $pedido->getClientePedido();
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $productos = $pedido->getProductos();
+                $productos = $pedido->getProductos();  
                 $pedido->setEstado($estado);
                 $id=$pedido->getId();
+                $pedido->setUpdatedAt(new \DateTime('now'));   
                 $pedidoRepository->add($pedido, true);
                 $request->getSession()->clear();
                 return $this->redirectToRoute('app_pedido_index', [], Response::HTTP_SEE_OTHER);
@@ -174,32 +176,44 @@ class PedidoController extends AbstractController
 
         }
         $sesion=$request->getSession();
-
+    
         $pedido->setUpdatedAt(new \DateTime('now'));
         $idOrd=$pedido->getOrder();
         $order=$orderRepository->findOneBy(['id'=>$idOrd]);
-        $ordId=$order->getId();
-        $sesion->set('cart_id',$order);
-       // dd($sesion);
+        $ordId=$order->getId(); 
+      //  $orderCart=$orderRepository->findOneBy(['id'=>$cart]);
+       // $pedido->setOrder($orderCart);
+        $idOrd=$pedido->getOrder();
+        $products=$pedido->getProductos();
         $items=$orderItemRepository->findBy(['orderRef'=>$order]);
+   
+       // dd($items);
         $id=$pedido->getClientePedido()->getId();
         $cliente=$clienteRepository->findOneBy(['id' => $id]);
+        $estadopedido = $estadoRepository->findOneBy(['estado' => 'Enviado']);
+        $estad=$pedido->getEstado();
+        if(is_null($estad)) {
+         $pedido->setEstado($estadopedido);
+        }
         $estado=$pedido->getEstado();
         $enviadoCliente= $estadoRepository->findOneBy(['estado'=>'Enviado al cliente']);
         $envClt=$enviadoCliente->getEstado();
         $recibidoCliente= $estadoRepository->findOneBy(['estado'=>'Recibido por el cliente']);
         $recClt=$recibidoCliente->getEstado();
         $productos=$pedido->getProductos();
+        
         $total=$order->getTotal();
         $pedido->setTotal($total);
+       
         foreach ($items as $item) {
             $product = $item->getProduct();
             $cant = $item->getQuantity();
             $product->setCantidadProducto($cant);
+            $order->addItem($item);
             $pedido->addItem($item);
             $pedido->addProducto($product);
         };
-
+         
         if(strcasecmp($estado, $envClt) == 0){
             $this->addFlash('warning', 'El pedido ya ha sido enviado.');
             return $this->redirectToRoute('app_pedido_index', [], Response::HTTP_SEE_OTHER);
@@ -209,7 +223,23 @@ class PedidoController extends AbstractController
                 return $this->redirectToRoute('app_pedido_index', [], Response::HTTP_SEE_OTHER);
             }else {
                 if ($form->isSubmitted() && $form->isValid()) {
-                   // $dat=$form->getData();
+                    
+                    $items =$pedido->getItems();
+                    foreach ($items as $item) {
+                    $product = $item->getProduct();
+           			$cant = $item->getQuantity();
+            		$product->setCantidadProducto($cant);
+                    }
+                    $totalPRoducto=[];
+                    $productos=$pedido->getProductos();
+                    foreach ($productos as $producto) {
+                     $cant =$producto->getCantidadProducto();
+                     $price=$producto->getPrecio();
+                     $tp=$cant*$price;
+                     array_push($totalPRoducto, $tp);
+                    }
+                    $totalpedido=array_sum( $totalPRoducto);
+                    $pedido->setTotal( $totalpedido);
                     $orderRepository->add($order,true);
                     $pedidoRepository->add($pedido, true);
                     $request->getSession()->clear();

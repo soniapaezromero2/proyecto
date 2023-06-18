@@ -42,7 +42,7 @@ class Pedido
 
     /**
      * @ORM\ManyToOne(targetEntity=Cliente::class, inversedBy="pedidosCliente")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $clientePedido;
 
@@ -53,10 +53,9 @@ class Pedido
     private $total;
 
     /**
-     * @ORM\OneToOne(targetEntity=Order::class, inversedBy="pedido", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $order;
+    private $orderpedido;
 
 
 
@@ -69,12 +68,10 @@ class Pedido
      * @ORM\ManyToMany(targetEntity=Producto::class, inversedBy="pedidos")
      */
     private $productos;
-
-    /**
+      /**
      * @ORM\OneToMany(targetEntity=OrderItem::class, mappedBy="pedido", orphanRemoval=true)
      */
     private $items;
-
 
 
     public function __construct()
@@ -85,14 +82,10 @@ class Pedido
 
 
 
-
-
-
     public function getId(): ?int
     {
         return $this->id;
     }
-
     public function getReferencia(): ?int
     {
         return $this->referencia;
@@ -186,18 +179,21 @@ class Pedido
         return $this;
     }
 
-    public function getOrder(): ?Order
+   /**
+     * @return mixed
+     */
+    public function getOrder()
     {
-        return $this->order;
+        return $this->orderpedido;
     }
 
-    public function setOrder(Order $order): self
+    /**
+     * @param mixed orderpedido
+     */
+    public function setOrder($orderpedido): void
     {
-        $this->order = $order;
-
-        return $this;
+        $this->orderpedido = $orderpedido;
     }
-
     /**
      * @param ArrayCollection $productos
      */
@@ -221,8 +217,7 @@ class Pedido
 
         return $this;
     }
-
-    /**
+/**
      * @return Collection<int, OrderItem>
      */
     public function getItems(): Collection
@@ -259,8 +254,5 @@ class Pedido
     {
         $this->items = $items;
     }
-
-
-
 
 }
